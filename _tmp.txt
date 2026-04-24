@@ -1,0 +1,3 @@
+    job.result()
+    tbl = bq.get_table(table_id)
+    print(f"  ✅ {table_id} — {tbl.num_rows:,} rows, {len(df.columns)} columns")
