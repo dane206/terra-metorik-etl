@@ -22,13 +22,14 @@ import os, sys, traceback, json, urllib.request, urllib.parse
 from datetime import date, timedelta, datetime, timezone
 import calendar
 
-from dotenv import load_dotenv
+import configparser
 from google.cloud import bigquery
 
-load_dotenv()
+config = configparser.ConfigParser()
+config.read(os.path.join(os.path.dirname(__file__), "config.ini"))
 
 # ── Config ────────────────────────────────────────────────────────────────────
-METORIK_API_KEY = os.getenv("METORIK_API_KEY")
+METORIK_API_KEY = config["metorik"]["api_key"]
 EARLIEST_DATE   = "2022-08-20"
 BQ_PROJECT      = "terra-analytics-prod"
 BQ_DATASET      = "sources"
