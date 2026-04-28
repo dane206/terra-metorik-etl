@@ -12,7 +12,7 @@ Run modes:
   python metorik_ad_spend.py --mode incremental # last 7 days (default)
 
 Requires:
-  .env with METORIK_API_KEY=
+  config.ini with [metorik] api_key
 """
 
 import os, sys, argparse, traceback, json, urllib.request, urllib.parse

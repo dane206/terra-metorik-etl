@@ -15,7 +15,7 @@ Run:
   python metorik_sources_utms.py
 
 Requires:
-  .env with METORIK_API_KEY=
+  config.ini with [metorik] api_key
 """
 
 import os, sys, traceback, json, urllib.request, urllib.parse
