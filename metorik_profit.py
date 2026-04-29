@@ -25,9 +25,9 @@ config = configparser.ConfigParser()
 config.read(os.path.join(os.path.dirname(__file__), "config.ini"))
 
 # ── Config ────────────────────────────────────────────────────────────────────
-METORIK_API_KEY = config["metorik"]["api_key"]
+METORIK_API_KEY = os.environ.get("METORIK_API_KEY") or config.get("metorik", "api_key", fallback=None)
 EARLIEST_DATE   = "2022-08-20"
-BQ_PROJECT      = "terra-analytics-prod"
+BQ_PROJECT      = os.environ.get("BQ_PROJECT", "terra-analytics-prod")
 BQ_DATASET      = "sources"
 BQ_TABLE        = "metorik_profit_daily"
 
@@ -55,6 +55,16 @@ schema = [
     SF("extra_cogs",        "FLOAT64"),
     SF("_loaded_at",        "TIMESTAMP"),
 ]
+
+# ── Helpers ──────────────────────────────────────────────────────────────────
+def get_max_date(table):
+    try:
+        result = list(bq.query(f"SELECT CAST(MAX(date) AS STRING) AS max_date FROM `{BQ_PROJECT}.{BQ_DATASET}.{table}`").result())
+        val = result[0].max_date if result else None
+        if val: print(f"  Resuming from: {val}")
+        return val
+    except Exception:
+        return None
 
 # ── API ───────────────────────────────────────────────────────────────────────
 def fetch_profit(start_date: str, end_date: str) -> dict:
@@ -115,7 +125,7 @@ def load_to_bq(rows: list, write_mode):
 # ── Main ──────────────────────────────────────────────────────────────────────
 def main():
     if not METORIK_API_KEY:
-        print("❌ METORIK_API_KEY not set in .env")
+        print("❌ METORIK_API_KEY not set (env var or config.ini)")
         sys.exit(1)
 
     parser = argparse.ArgumentParser()
@@ -125,7 +135,8 @@ def main():
     yesterday = str(date.today() - timedelta(days=1))
 
     if args.mode == "incremental":
-        start_date = str(date.today() - timedelta(days=7))
+        max_date = get_max_date(BQ_TABLE)
+        start_date = str((datetime.strptime(max_date, "%Y-%m-%d").date() - timedelta(days=1))) if max_date else str(date.today() - timedelta(days=7))
         write_mode = bigquery.WriteDisposition.WRITE_APPEND
     else:
         start_date = EARLIEST_DATE
