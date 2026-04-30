@@ -6,9 +6,11 @@ Entrypoint for Cloud Run Job.
 import subprocess, sys
 
 scripts = [
-    ["python", "metorik_ad_spend.py",    "--mode", "incremental"],
-    ["python", "metorik_profit.py",       "--mode", "incremental"],
-    ["python", "metorik_revenue.py",      "--mode", "incremental"],
+    ["python", "metorik_orders_api.py",    "--mode", "incremental"],
+    ["python", "metorik_customers_api.py", "--mode", "incremental"],
+    ["python", "metorik_ad_spend.py",      "--mode", "incremental"],
+    ["python", "metorik_profit.py",        "--mode", "incremental"],
+    ["python", "metorik_revenue.py",       "--mode", "incremental"],
     ["python", "metorik_sources_utms.py"],
 ]
 
