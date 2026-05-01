@@ -25,9 +25,9 @@ config = configparser.ConfigParser()
 config.read(os.path.join(os.path.dirname(__file__), "config.ini"))
 
 # ── Config ────────────────────────────────────────────────────────────────────
-METORIK_API_KEY = os.environ.get("METORIK_API_KEY") or config.get("metorik", "api_key", fallback=None)
+METORIK_API_KEY = config["metorik"]["api_key"]
 EARLIEST_DATE   = "2022-08-20"
-BQ_PROJECT      = os.environ.get("BQ_PROJECT", "terra-analytics-prod")
+BQ_PROJECT      = "terra-analytics-prod"
 BQ_DATASET      = "sources"
 BQ_TABLE        = "metorik_ad_spend_daily"
 
@@ -104,7 +104,7 @@ def load_to_bq(rows: list, write_mode):
 # ── Main ──────────────────────────────────────────────────────────────────────
 def main():
     if not METORIK_API_KEY:
-        print("❌ METORIK_API_KEY not set in .env")
+        print("❌ api_key not set in config.ini [metorik]")
         sys.exit(1)
 
     parser = argparse.ArgumentParser()
