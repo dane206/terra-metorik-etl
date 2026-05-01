@@ -27,8 +27,8 @@ config.read(os.path.join(os.path.dirname(__file__), "config.ini"))
 # ── Config ────────────────────────────────────────────────────────────────────
 METORIK_API_KEY = config["metorik"]["api_key"]
 EARLIEST_DATE   = "2022-08-20"
-BQ_PROJECT      = "terra-analytics-prod"
-BQ_DATASET      = "sources"
+BQ_PROJECT      = config["bigquery"]["project"]
+BQ_DATASET      = config["bigquery"]["dataset"]
 BQ_TABLE        = "metorik_revenue_daily"
 
 bq = bigquery.Client(project=BQ_PROJECT)
