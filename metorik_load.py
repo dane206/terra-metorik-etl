@@ -129,7 +129,12 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--data-dir", required=True)
     parser.add_argument("--skip", nargs="*", default=[], help="Table names to skip")
+    parser.add_argument("--project", default="terra-analytics-prod", help="BQ project")
     args = parser.parse_args()
+
+    global BQ_PROJECT, bq
+    BQ_PROJECT = args.project
+    bq = bigquery.Client(project=BQ_PROJECT)
 
     data_dir = os.path.expanduser(args.data_dir)
     if not os.path.isdir(data_dir):
