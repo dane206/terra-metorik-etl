@@ -146,7 +146,11 @@ def fetch_customers(updated_after=None):
         if not batch:
             break
         for c in batch:
-            rows.append(flatten_customer(c))
+            row = flatten_customer(c)
+            if not row.get("customer_id"):
+                print(f"  ⚠️  Skipping customer with no customer_id: {c.get('email')}")
+                continue
+            rows.append(row)
         pagination = data.get("pagination") or data.get("meta") or {}
         has_more = pagination.get("has_more_pages") or pagination.get("last_page", 1) > page
         if not has_more:

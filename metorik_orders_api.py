@@ -258,7 +258,11 @@ def fetch_orders(updated_after=None):
         if not batch:
             break
         for o in batch:
-            rows.append(flatten_order(o))
+            row = flatten_order(o)
+            if not row.get("order_id"):
+                print(f"  ⚠️  Skipping order with no order_id: {o.get('order_number')}")
+                continue
+            rows.append(row)
         pagination = data.get("pagination") or data.get("meta") or {}
         has_more = pagination.get("has_more_pages") or pagination.get("last_page", 1) > page
         if not has_more:
