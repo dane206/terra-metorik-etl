@@ -27,8 +27,8 @@ config = configparser.ConfigParser()
 config.read(os.path.join(os.path.dirname(__file__), "config.ini"))
 
 METORIK_API_KEY = os.environ.get("METORIK_API_KEY") or config.get("metorik", "api_key", fallback=None)
-BQ_PROJECT      = os.environ.get("BQ_PROJECT", "terra-analytics-prod")
-BQ_DATASET      = "sources"
+BQ_PROJECT      = os.environ.get("BQ_PROJECT") or config.get("bigquery", "project", fallback="terra-analytics-dev")
+BQ_DATASET      = config.get("bigquery", "dataset", fallback="sources")
 BQ_TABLE        = "metorik_orders"
 EARLIEST_DATE   = "2022-08-20"
 BASE_URL        = "https://app.metorik.com/api/v1/store"
