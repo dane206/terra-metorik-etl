@@ -25,10 +25,10 @@ config = configparser.ConfigParser()
 config.read(os.path.join(os.path.dirname(__file__), "config.ini"))
 
 # ── Config ────────────────────────────────────────────────────────────────────
-METORIK_API_KEY = config["metorik"]["api_key"]
+METORIK_API_KEY = os.environ.get("METORIK_API_KEY") or config.get("metorik", "api_key", fallback=None)
 EARLIEST_DATE   = "2022-08-20"
-BQ_PROJECT      = config["bigquery"]["project"]
-BQ_DATASET      = config["bigquery"]["dataset"]
+BQ_PROJECT      = os.environ.get("BQ_PROJECT") or config.get("bigquery", "project", fallback="terra-analytics-dev")
+BQ_DATASET      = config.get("bigquery", "dataset", fallback="sources")
 BQ_TABLE        = "metorik_ad_spend_daily"
 
 bq = bigquery.Client(project=BQ_PROJECT)
