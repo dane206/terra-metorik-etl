@@ -6,12 +6,14 @@ Pulls Metorik API data and loads Metorik/Shopify CSV exports → `terra-analytic
 
 ### API pulls
 
-| Script | Table | Granularity |
-|---|---|---|
-| `metorik_ad_spend.py` | `metorik_ad_spend_daily` | platform × day |
-| `metorik_profit.py` | `metorik_profit_daily` | day |
-| `metorik_revenue.py` | `metorik_revenue_daily` | day |
-| `metorik_sources_utms.py` | `metorik_sources_utms` | utm combo × period |
+| Script | Table | Granularity | Mode |
+|---|---|---|---|
+| `metorik_ad_spend.py` | `metorik_ad_spend_daily` | platform × day | incremental / backfill |
+| `metorik_profit.py` | `metorik_profit_daily` | day | incremental / backfill |
+| `metorik_revenue.py` | `metorik_revenue_daily` | day | incremental / backfill |
+| `metorik_sources_utms.py` | `metorik_sources_utms` | utm combo × period | full reload |
+| `metorik_orders_api.py` | `metorik_orders` | one row per order | incremental MERGE / backfill |
+| `metorik_customers_api.py` | `metorik_customers` | one row per customer | incremental MERGE / backfill |
 
 ### CSV/ZIP exports (manual)
 
@@ -58,6 +60,15 @@ python metorik_revenue.py --mode incremental
 python metorik_revenue.py --mode backfill
 
 python metorik_sources_utms.py                      # always full TRUNCATE + reload
+
+# Order and customer API pulls (MERGE/upsert)
+python metorik_orders_api.py --mode incremental
+python metorik_orders_api.py --mode backfill
+python metorik_customers_api.py --mode incremental
+python metorik_customers_api.py --mode backfill
+
+# Run all incremental scripts in sequence (Cloud Run entrypoint)
+python run_incremental.py
 
 # CSV/ZIP export loader
 python metorik_load.py --data-dir ~/projects/data/metorik
